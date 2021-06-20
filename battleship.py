@@ -21,16 +21,10 @@ class ShipBoard:
         except IndexError:
             return False
 
-    def last_shot(self, row, col):
-        pass
-
-    def which_next(self):
-        pass
-
     def change_to_miss(self, row, col):
         self.board[row][col]="0"
 
-    def change_to_traiony(self, row, col):
+    def change_to_trafiony(self, row, col):
         self.board[row][col]="?"
         #czy to powinien być string czy coś innego?
 
@@ -65,30 +59,30 @@ class DoubleShip:
         #to będzie subtabela - np. statek podwójny ?? to pełna pozycja obu kostek. zmiana parametru obiektu
         pass
 
-    def first_move(self):
+    def first_move(self, current_row, current_col):
             dict={"row":"x", "col":"y"}
-            dict["row"]=self.row+1
-            dict["col"]=self.col
+            dict["row"]=current_row
+            dict["col"]=current_col+1
             return dict
         #!!!!!!!!!!!!tu musi zwrócić liczbę z cyfr ;pppppppppp
     #next?????? bo ma brać kolejny ruch np. w górę, bok, itd.
     #ifowanie na poziomie funkcji? że np jak krawędź, albo za mały odstęp od innego statku
-    def second_move(self):
+    def second_move(self, current_row, current_col):
         dict={"row":"x", "col":"y"}
-        dict["row"]=self.row
-        dict["col"]=self.col+1
+        dict["row"]=current_row+1
+        dict["col"]=current_col
         return dict
 
-    def third_move(self):
+    def third_move(self, current_row, current_col):
         dict={"row":"x", "col":"y"}
-        dict["row"]=self.row-1
-        dict["col"]=self.col
+        dict["row"]=current_row
+        dict["col"]=current_col-1
         return dict
 
-    def fourth_move(self):
+    def fourth_move(self, current_row, current_col):
         dict={"row":"x", "col":"y"}
-        dict["row"]=self.row
-        dict["col"]=self.col-1
+        dict["row"]=current_row-1
+        dict["col"]=current_col
         return dict
         
 
@@ -100,22 +94,61 @@ board=ShipBoard(x)
 print(board)
 
 
-ship1=DoubleShip(4,4,"unfully",board)
-x,y=ship1.row, ship1.col
-board.change_to_traiony(x,y)
-print(board)
+
+#board.change_to_traiony(x,y)
+#print(board)
 ###
-#będzie niżej rekurencja? 
+ship1=DoubleShip(3,3,"unfully",board)
+
 while ship1.form=="unfully":
+    a,b=ship1.row, ship1.col
+    board.change_to_trafiony(a,b)
+    print(board)
+    x,y=ship1.row, ship1.col#info={"info1":"trafiony niezatopiony", "info2":"trafiony zatopiony", "info3":"nietrafio
     #pewno zamnkąć to w funkcji
-    lst_of_methods=[ship1.first_move(), ship1.second_move(), ship1.third_move(), ship1.fourth_move()]
+    last=[x,y]
+    print(last) #pierwszy po sygnale "trafiony niezatopiony"
     #q=ship1.first_move()
-    for q in lst_of_methods:
-        if board.is_empty(q["row"], q["col"]):
-            print(q)
-            board.change_to_zatopiony(q["row"], q["col"])
-            board.change_to_zatopiony(ship1.row, ship1.col)
-            """
+    ###muszę wstawić jako argument do kolejnej metody bieżący, ostatni wykonany ruch
+    lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
+    #print(lst_of_methods[0])
+    #print(lst_of_methods[0]["row"])
+    for q in range (0,len(lst_of_methods)+1):
+        last=[ship1.row, ship1.col]
+        lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
+        
+        x=int(lst_of_methods[q]["row"]) 
+        y=int(lst_of_methods[q]["col"])
+        print(x)
+        print(y)
+        if board.is_empty==False:
+            print("unavailable move")
+            continue
+        elif board.is_empty(x,y):
+            print(lst_of_methods[q])
+            z=input("Podaj stan statku: ")
+            #komunikat, że trafiony
+            if z=="nietrafiony":
+                board.change_to_miss(x,y)
+                last=[x,y]
+            elif z=="zatopiony":
+                board.change_to_zatopiony(x,y)
+                last=[x,y]
+                ship1.form="fully"
+                
+                print(board)
+                print(ship1.form)
+                break
+            #na razie pomijam, że trzeba wszystkie zmienić na X z tej pętli
+            elif z=="trafiony":
+                board.change_to_trafiony(x,y)
+                last=[x,y]
+            print(board)
+        
+            
+
+            #board.change_to_zatopiony(ship1.row, ship1.col) #ta linijka, żeby ze ? zrobić X
+"""
             działa przy podwójnym statku. przy 3 i 4 nie
             board.change_to_trafiony i dodaj do listy:
             lst_of_tra_niezat=[]
@@ -123,10 +156,6 @@ while ship1.form=="unfully":
             potem, kiedy zatopiony to wszystkie elementy z q zamien na "X" z "?"
 
             """
-            break
-    
-    print(board)
-    ship1.form="fully"
 """
 ###
 x=ship1.first_move()
