@@ -113,7 +113,7 @@ while ship1.form=="unfully":
     print(last) #pierwszy po sygnale "trafiony niezatopiony"
     #q=ship1.first_move()
     ###muszę wstawić jako argument do kolejnej metody bieżący, ostatni wykonany ruch
-    lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
+    #lst_of_methods=[ship1.first_move(), ship1.second_move(), ship1.third_move(), ship1.fourth_move()]
     #print(lst_of_methods[0])
     #print(lst_of_methods[0]["row"])
     a=ship1.length
@@ -121,13 +121,14 @@ while ship1.form=="unfully":
     num=0
     searching=True
     while searching:
-        for w in range(3): #zależnie od długości statku
-            for q in range (0,len(lst_of_methods)+1):
+        for w in range(3):#zależnie od długości statku
+            last=[x,y] 
+            for q in range(0,4): #bo tyle metod w lst of meth
                 #last=[ship1.row, ship1.col]
-                #lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
+                lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
                 x=int(lst_of_methods[q]["row"]) 
                 y=int(lst_of_methods[q]["col"])
-                #print(x)
+                print(q)
                 #print(y)
                 if board.is_empty(x,y)==False:
                     print("unavailable move")
@@ -150,8 +151,10 @@ while ship1.form=="unfully":
                     elif z=="trafiony":
                         board.change_to_trafiony(x,y)
                         new_last=[x,y]
-                        print(new_last)
-                    print(board)
+                        print(board)
+            last=new_last
+            print(last)
+            print(board)
         
             
 
