@@ -48,12 +48,14 @@ class Ship:
 
 
 class DoubleShip:
-    def __init__(self, row, col, form, board):
+    def __init__(self, row, col, form, board, length):
         #form - pełny, niepełny (i jak) - to podaję po strzale #unfully, fully
         self.row=row
         self.col=col
         self.form=form
         self.board=board#ale tylko po to, by śledzić, jak wygląda tablica
+        self.length=length
+        #length-1,2,3,4
         #zliczanie obiektów tworzonych?
     def changing_form(self):
         #to będzie subtabela - np. statek podwójny ?? to pełna pozycja obu kostek. zmiana parametru obiektu
@@ -98,7 +100,8 @@ print(board)
 #board.change_to_traiony(x,y)
 #print(board)
 ###
-ship1=DoubleShip(3,3,"unfully",board)
+ship1=DoubleShip(4,4,"unfully",board, 3)
+
 
 while ship1.form=="unfully":
     a,b=ship1.row, ship1.col
@@ -113,37 +116,42 @@ while ship1.form=="unfully":
     lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
     #print(lst_of_methods[0])
     #print(lst_of_methods[0]["row"])
-    for q in range (0,len(lst_of_methods)+1):
-        last=[ship1.row, ship1.col]
-        lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
-        
-        x=int(lst_of_methods[q]["row"]) 
-        y=int(lst_of_methods[q]["col"])
-        print(x)
-        print(y)
-        if board.is_empty==False:
-            print("unavailable move")
-            continue
-        elif board.is_empty(x,y):
-            print(lst_of_methods[q])
-            z=input("Podaj stan statku: ")
+    a=ship1.length
+    print(a)
+    num=0
+    searching=True
+    while searching:
+        for w in range(3): #zależnie od długości statku
+            for q in range (0,len(lst_of_methods)+1):
+                #last=[ship1.row, ship1.col]
+                #lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
+                x=int(lst_of_methods[q]["row"]) 
+                y=int(lst_of_methods[q]["col"])
+                #print(x)
+                #print(y)
+                if board.is_empty(x,y)==False:
+                    print("unavailable move")
+                    continue
+                elif board.is_empty(x,y):
+                    #print(lst_of_methods[q])
+                    z=input("Podaj stan statku: ")
             #komunikat, że trafiony
-            if z=="nietrafiony":
-                board.change_to_miss(x,y)
-                last=[x,y]
-            elif z=="zatopiony":
-                board.change_to_zatopiony(x,y)
-                last=[x,y]
-                ship1.form="fully"
+                    if z=="nietrafiony":
+                        board.change_to_miss(x,y)
+                    elif z=="zatopiony":
+                        board.change_to_zatopiony(x,y)
+                        ship1.form="fully"
                 
-                print(board)
-                print(ship1.form)
-                break
+                        #print(board)
+                        #print(ship1.form)
+                        break
+                        searching=False
             #na razie pomijam, że trzeba wszystkie zmienić na X z tej pętli
-            elif z=="trafiony":
-                board.change_to_trafiony(x,y)
-                last=[x,y]
-            print(board)
+                    elif z=="trafiony":
+                        board.change_to_trafiony(x,y)
+                        new_last=[x,y]
+                        print(new_last)
+                    print(board)
         
             
 
