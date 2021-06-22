@@ -1,11 +1,10 @@
-
 def create_board(col, row):
-    board=[["e" for col in range(col)] for row in range(row)]
+    board=[["0" for col in range(col)] for row in range(row)]
     return board
 
 #ta tablica to musza być puste elementy, nie cyfry
-
-x=create_board(5,5)
+board_of='global'
+board_of=create_board(5,5)
 
 class ShipBoard:
     def __init__(self, board):
@@ -15,9 +14,13 @@ class ShipBoard:
     def create_board(self):
         [[col for col in range(self.col)] for row in range(self.row)]
 
+    def show_board( self, s_board):
+        for row in s_board:
+            print((" ").join(row))
+
     def is_empty(self, row, col):
         try:
-            return self.board[row][col]=="e"
+            return self.board[row][col]=="0"
         except IndexError:
             return False
 
@@ -92,8 +95,9 @@ class DoubleShip:
 #głównym celem klas(y)Ship jest generowanie kolejnego ruchu
 #tu classmethod, że tworzy obiekt. ale po co? jak zmienię tu tablicę?tu nie zmieniam tablicy, tylko planuję ruch na podstawie tablicy. tablicę zmieniam w klasie Board
 
-board=ShipBoard(x)
+board=ShipBoard(board_of)
 print(board)
+board.show_board(board_of)
 
 
 
@@ -143,19 +147,21 @@ while ship1.form=="unfully":
                         board.change_to_zatopiony(x,y)
                         ship1.form="fully"
                 
-                        #print(board)
+                #print(board)
                         #print(ship1.form)
                         break
                         searching=False
             #na razie pomijam, że trzeba wszystkie zmienić na X z tej pętli
                     elif z=="trafiony":
                         board.change_to_trafiony(x,y)
-                        new_last=[x,y]
                         print(board)
+                        board.show_board(board_of)
+                        new_last=[x,y]
+
             last=new_last
             print(last)
             print(board)
-        
+            board.show_board(board_of)
             
 
             #board.change_to_zatopiony(ship1.row, ship1.col) #ta linijka, żeby ze ? zrobić X
@@ -165,7 +171,6 @@ while ship1.form=="unfully":
             lst_of_tra_niezat=[]
             lst_of_tra_niezat.append(q)
             potem, kiedy zatopiony to wszystkie elementy z q zamien na "X" z "?"
-
             """
 """
 ###
@@ -179,11 +184,9 @@ print(board)
 x=ship1.second_move()
 board.change_to_miss(x["row"], x["col"])
 print(board)
-
 x=ship1.third_move()
 board.change_to_miss(x["row"], x["col"])
 print(board)
-
 x=ship1.fourth_move()
 board.change_to_miss(x["row"], x["col"])
 print(board)
