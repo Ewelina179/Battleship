@@ -2,7 +2,7 @@ def create_board(col, row):
     board=[["0" for col in range(col)] for row in range(row)]
     return board
 
-board_of='global'
+global board_of
 board_of=create_board(5,5)
 
 class ShipBoard:
@@ -23,7 +23,7 @@ class ShipBoard:
             return False
 
     def change_to_miss(self, row, col):
-        self.board[row][col]="0"
+        self.board[row][col]=" "
 
     def change_to_trafiony(self, row, col):
         self.board[row][col]="?"
@@ -75,26 +75,27 @@ class Ship:
         
 
 board=ShipBoard(board_of)
-print(board)
-board.show_board(board_of,5,5)
+#print(board)
+#board.show_board(board_of)
 
 ship1=Ship(4,4,"unfully",board, 3)
 
 
 while ship1.form=="unfully":
-    a,b=ship1.row, ship1.col
-    board.change_to_trafiony(a,b)
+    x,y=ship1.row, ship1.col
+    board.change_to_trafiony(x,y)
     print(board)
-    x,y=ship1.row, ship1.col#info={"info1":"trafiony niezatopiony", "info2":"trafiony zatopiony", "info3":"nietrafio
-    last=[x,y]
-    print(last) #pierwszy po sygnale "trafiony niezatopiony"
+    board.show_board(board_of)
+    #info={"info1":"trafiony niezatopiony", "info2":"trafiony zatopiony", "info3":"nietrafio
+    #last=[x,y]
+    #print(last) #pierwszy po sygnale "trafiony niezatopiony"
     a=ship1.length
-    print(a)
     num=0
+    global searching
     searching=True
     while searching:
         for w in range(3):#zależnie od długości statku
-            last=[x,y] 
+            last=[x,y]
             for q in range(0,4): #bo tyle metod w lst of meth
                 #last=[ship1.row, ship1.col]
                 lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
@@ -108,22 +109,26 @@ while ship1.form=="unfully":
                     z=input("Podaj stan statku: ")
                     if z=="nietrafiony":
                         board.change_to_miss(x,y)
+                        board.show_board(board_of)
+                        continue
                     elif z=="zatopiony":
                         board.change_to_zatopiony(x,y)
                         ship1.form="fully"
-                        break
                         searching=False
+                        break
             #na razie pomijam, że trzeba wszystkie zmienić na X z tej pętli
                     elif z=="trafiony":
                         board.change_to_trafiony(x,y)
                         print(board)
-                        board.show_board(board_of,5,5)
+                        board.show_board(board_of)
                         new_last=[x,y]
-
-            last=new_last
-            print(last)
-            print(board)
-            board.show_board(board_of,5,5)
+                        print(last)
+                        print(new_last)
+                        break
+        last=new_last            
+        print(last)
+        print(board)
+        board.show_board(board_of)
             
 
             
