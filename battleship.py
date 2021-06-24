@@ -48,17 +48,6 @@ class Ship:
     def changing_form(self):
         pass
 
-    def current(self, current_row, current_col):
-        return current_row, current_col
-
-    def catch_all(self, x,y):
-        coord=((x+1, y), (x,y+1), (x-1,y), (x, y-1))
-        for x, y in coord:
-            try:
-                return x,y
-            except IndexError:
-                pass
-
     def first_move(self, x,y):
         lst=[x+1,y]
         return lst
