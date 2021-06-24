@@ -27,7 +27,6 @@ class ShipBoard:
 
     def change_to_trafiony(self, row, col):
         self.board[row][col]="?"
-    
     def change_to_zatopiony(self, row, col):
         self.board[row][col]="X"
 
@@ -49,29 +48,32 @@ class Ship:
     def changing_form(self):
         pass
 
-    def first_move(self, current_row, current_col):
-            dict={"row":"x", "col":"y"}
-            dict["row"]=current_row
-            dict["col"]=current_col+1
-            return dict
+    def current(self, current_row, current_col):
+        return current_row, current_col
 
-    def second_move(self, current_row, current_col):
-        dict={"row":"x", "col":"y"}
-        dict["row"]=current_row+1
-        dict["col"]=current_col
-        return dict
+    def catch_all(self, x,y):
+        coord=((x+1, y), (x,y+1), (x-1,y), (x, y-1))
+        for x, y in coord:
+            try:
+                return x,y
+            except IndexError:
+                pass
 
-    def third_move(self, current_row, current_col):
-        dict={"row":"x", "col":"y"}
-        dict["row"]=current_row
-        dict["col"]=current_col-1
-        return dict
+    def first_move(self, x,y):
+        lst=[x+1,y]
+        return lst
 
-    def fourth_move(self, current_row, current_col):
-        dict={"row":"x", "col":"y"}
-        dict["row"]=current_row-1
-        dict["col"]=current_col
-        return dict
+    def second_move(self, x,y):
+        lst=[x,y+1]
+        return lst
+
+    def third_move(self, x,y):
+        lst=[x-1,y]
+        return lst
+
+    def fourth_move(self, x,y):
+        lst=[x,y-1]
+        return lst
         
 
 board=ShipBoard(board_of)
@@ -80,55 +82,50 @@ board=ShipBoard(board_of)
 
 ship1=Ship(4,4,"unfully",board, 3)
 
-
 while ship1.form=="unfully":
-    x,y=ship1.row, ship1.col
-    board.change_to_trafiony(x,y)
+    q,w=ship1.row, ship1.col
+    board.change_to_trafiony(q,w)
     print(board)
     board.show_board(board_of)
-    #info={"info1":"trafiony niezatopiony", "info2":"trafiony zatopiony", "info3":"nietrafio
-    #last=[x,y]
-    #print(last) #pierwszy po sygnale "trafiony niezatopiony"
-    a=ship1.length
-    num=0
-    global searching
-    searching=True
-    while searching:
-        for w in range(3):#zależnie od długości statku
-            last=[x,y]
-            for q in range(0,4): #bo tyle metod w lst of meth
-                #last=[ship1.row, ship1.col]
-                lst_of_methods=[ship1.first_move(last[0], last[1]), ship1.second_move(last[0],last[1]), ship1.third_move(last[0], last[1]), ship1.fourth_move(last[0], last[1])]
-                x=int(lst_of_methods[q]["row"]) 
-                y=int(lst_of_methods[q]["col"])
-                print(q)
-                if board.is_empty(x,y)==False:
-                    print("unavailable move")
+    global LAST_HIT
+    LAST_HIT=[]
+    LAST_HIT.append([q,w])
+    #LAST_HIT.append([2,2])
+    
+    
+
+    
+    LAST_HIT=[[q,w]]    
+    for el in LAST_HIT: 
+        for method in range(0,4):
+            print(LAST_HIT)
+            lst_of_methods=[ship1.first_move(el[0], el[1]), ship1.second_move(el[0], el[1]), ship1.third_move(el[0], el[1]), ship1.fourth_move(el[0], el[1])]
+            
+            x=int(lst_of_methods[method][0]) 
+            y=int(lst_of_methods[method][1])
+            
+            if board.is_empty(x,y)==False:
+                    print("unavailable move")    
                     continue
-                elif board.is_empty(x,y):
-                    z=input("Podaj stan statku: ")
+            elif board.is_empty(x,y):
+                    print(x,y)
+                    z=input("Podaj stan współrzędnych: ")
+                    
                     if z=="nietrafiony":
                         board.change_to_miss(x,y)
                         board.show_board(board_of)
                         continue
-                    elif z=="zatopiony":
-                        board.change_to_zatopiony(x,y)
+                    if z=="zatopiony":
+                        LAST_HIT.append([x,y])
+                        for el in LAST_HIT:
+                            board.change_to_zatopiony(el[0],el[1])
+                        board.show_board(board_of)
                         ship1.form="fully"
-                        searching=False
                         break
-            #na razie pomijam, że trzeba wszystkie zmienić na X z tej pętli
-                    elif z=="trafiony":
+                    #nie przerywa głównej pętli while. do poprawki
+                    if z=="trafiony":
                         board.change_to_trafiony(x,y)
                         print(board)
                         board.show_board(board_of)
-                        new_last=[x,y]
-                        print(last)
-                        print(new_last)
-                        break
-        last=new_last            
-        print(last)
-        print(board)
-        board.show_board(board_of)
-            
-
-            
+                        LAST_HIT.append([x,y])
+                        
