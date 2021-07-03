@@ -12,6 +12,8 @@ row=int(input("Podaj wysokość tablicy: "))
 global board_of
 board_of=create_board(col,row)
 
+r=col*row
+
 class ShipBoard:
     def __init__(self, board):
         self.board=board
@@ -80,13 +82,12 @@ board.show_board(board_of)
 
         #if kolejny jest empty to go podaj!
         #kolejna propozycja ruchu z listy. odczyt z pliku, zakodować i wysłać. o ile już nie padł ruch!!!! uwzględnij to!
-        
-def find_rest_of_ship(ship1):
-    ship1.form="unfully"
-    global A
-    A=True
-    while A:
-        q,w=ship1.row, ship1.col    
+      
+def find_rest_of_ship(ship):
+    ship.form="unfully"
+    #global A == True
+    while True:
+        q,w=ship.row, ship.col    
         board.change_to_hit(q,w)
         print(board)
         board.show_board(board_of)
@@ -97,11 +98,11 @@ def find_rest_of_ship(ship1):
         for el in LAST_HIT: 
             for method in range(0,4):
                 print(LAST_HIT)
-                lst_of_methods=[ship1.south_move(el[0], el[1]), ship1.east_move(el[0], el[1]), ship1.north_move(el[0], el[1]), ship1.west_move(el[0], el[1])]
+                lst_of_methods=[ship.south_move(el[0], el[1]), ship.east_move(el[0], el[1]), ship.north_move(el[0], el[1]), ship.west_move(el[0], el[1])]
             
                 x=int(lst_of_methods[method][0]) 
                 y=int(lst_of_methods[method][1])
-            
+
                 if board.is_empty(x,y)==False:
                     print("unavailable move")    
                     continue
@@ -118,34 +119,35 @@ def find_rest_of_ship(ship1):
                         for el in LAST_HIT:
                             board.change_to_sunken(el[0],el[1])
                         board.show_board(board_of)
-                        #ship1.form="fully"
-                        ship1.form="fully"
-                        A=False
-                        break
+                        ship.form="fully"
+                        return False
+                        
+                        #A==False
+                        #break
                     #nie przerywa głównej pętli while. do poprawki
                     if z=="trafiony":
                         board.change_to_hit(x,y)
                         print(board)
                         board.show_board(board_of)
                         LAST_HIT.append([x,y])
-
+            
 
 random_coord=rand_coord(col, row)
 #print(random_coord)
 #x i y to przekątne adekwatne do rozmiaru tablicy
 x=diagonal1(5,5)
 y=diagonal2(5,5)
-print(x)
-print(y)
+
 #diagonals to lista współrzędnych wszystkich punktów na przekątnych
 diagonals=x+y
-print(diagonals)
-
+#print(diagonals)
+"""""
 def move_zero(diagonals):
     mylist=iter([x for x in diagonals])
 #kolejny ruch to po kolei punty ze współrzędnych. a gdy braknie, losowe z tablicy (+dodać wyjatki, że punkt zatopiony!!!)
     next_move=next(mylist, rand_coord(col, row))
     return next_move
+"""""
 ###################################################
 game_on=True
 while game_on:
@@ -153,10 +155,11 @@ while game_on:
     y=diagonal2(5,5)
 #diagonals to lista współrzędnych wszystkich punktów na przekątnych
     diagonals=x+y
-
+    #print(diagonals)
     mylist=iter([x for x in diagonals])
     coord=next(mylist, rand_coord(col, row))
-    for el in board_of:
+    print(coord)
+    for el in range(r+1):
         
 #przychodzące - raise Exception na wszelki wypadek?    
 #coord=[2,2]#przykładowe "kolejne współrzędne" z mojej listy proponowanych ruchów, która to jeszcze nie powstała ;p
@@ -167,23 +170,23 @@ while game_on:
             if c=="trafiony":
                 ship=Ship(coord[0],coord[1],"unfully",board, 3)
                 find_rest_of_ship(ship)
-                board.show_board(board_of)
         #tu się nie przerywa ta pętla. do poprawki
             elif c=="nietrafiony":
                 board.change_to_miss(coord[0], coord[1])
                 board.show_board(board_of)
-                coord=next(mylist, rand_coord(col, row))
+                coord=next(mylist, rand_coord(col, row))#odeślij te współrzędne 
                 print(coord)
-                continue
+                
             elif c=="zatopiony":
                 board.change_to_sunken(coord[0], coord[1]) #zliczać te pojedyncze zatopione?
                 board.show_board(board_of)
-                coord=next(mylist, rand_coord(col, row))
+                coord=next(mylist, rand_coord(col, row))#odeślij te współrzędne
                 print(coord)
-                continue
+                
             #coord=next(mylist, rand_coord(col, row))
      #if kolejny jest empty to go podaj!
         #kolejna propozycja ruchu z listy. odczyt z pliku, zakodować i wysłać. o ile już nie padł ruch!!!! uwzględnij to!
         else:
             coord=next(mylist, rand_coord(col, row))
+            print(coord)
             
