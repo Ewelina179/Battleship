@@ -19,6 +19,8 @@ class ShipBoard(Board):
         self.board = self.create_board()
         self.first_diagonal = self.diagonal1()
         self.second_diagonal = self.diagonal2()
+        self.rand_coord = self.rand_coordinates()
+        self.size_of_board = self.col * self.row
 
     def create_board(self):
         return [["0" for col in range(self.col)] for row in range(self.row)]
@@ -64,7 +66,7 @@ class ShipBoard(Board):
             lst.append(k)
         return lst
 
-    def rand_coord(x,y):
+    def rand_coordinates(x,y):
         rand_row=random.randint(0, x-1)
         rand_col=random.randint(0, y-1)
         lst=[rand_row, rand_col]
@@ -95,12 +97,15 @@ class Battleship(Game):
 
     def __init__(self, board: ShipBoard):
         self.board = board
+        self.first_moves = board.first_diagonal + board.second_diagonal + board.rand_coord
 
     def start_game(self):
-        pass
+        print("Proponowane współrzędne do sprawdzenia na tablicy przeciwnika: " + str(self.first_moves_when_not_hunting()))
 
-    def first_move(self):
-        pass
+    def first_moves_when_not_hunting(self):
+        mylist=iter(self.first_moves)
+        coord=next(mylist)
+        return coord
 
     def next_move(self):
         pass
@@ -109,7 +114,30 @@ class Battleship(Game):
         pass
 
     def play_game(self):
-        pass
+        game_on=True
+        while game_on:
+            self.start_game()
+            for el in range(self.size_of_board+1):
+                if self.board.is_empty(coord[0], coord[1]):
+                    c=input("Wpisz trafiony, nietrafiony lub zatopiony: ")
+                    if c=="trafiony":
+                        self.board.change_to_trafiony(coord[0], coord[1])
+                        #ship=Ship(coord[0],coord[1],"unfully", self.board, 3)
+                        self.hunt_for_ship()
+                    elif c=="nietrafiony":
+                        self.board.change_to_miss(coord[0], coord[1])
+                        self.board.show_board()
+                        coord=self.first_moves_when_not_hunting()
+                        print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))  
+                    elif c=="zatopiony":
+                        self.board.change_to_sunken(coord[0], coord[1])
+                        self.board.show_board()
+                        coord=self.first_moves_when_not_hunting()
+                        print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))
+                else:
+                    coord=self.first_moves_when_not_hunting()
+                    print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))
+
 
 def main():
     col = int(input("Podaj długość tablicy: "))
