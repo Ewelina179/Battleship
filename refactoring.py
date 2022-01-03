@@ -29,21 +29,20 @@ class ShipBoard(Board):
         for row in self.board:
             print((" ").join(row))
 
-    def is_empty(self, row, col):
+    def is_empty(self, x, y):
         try:
-            return self.board[row][col]=="e"
+            self.board[x][y]=="e"
+            return True
         except IndexError:
             return False
 
     def change_to_miss(self, row, col):
-        self.board[row][col]="0"
+        self.board[row][col]=" "
 
-    def change_to_trafiony(self, row, col):
+    def change_to_hit(self, row, col):
         self.board[row][col]="?"
-        #czy to powinien być string czy coś innego?
 
-    def change_to_zatopiony(self, row, col):
-        #zmienic tablice i licznik, że jest obiekt
+    def change_to_sunken(self, row, col):
         self.board[row][col]="X"
 
     def diagonal1(self):
@@ -66,9 +65,9 @@ class ShipBoard(Board):
             lst.append(k)
         return lst
 
-    def rand_coordinates(x,y):
-        rand_row=random.randint(0, x-1)
-        rand_col=random.randint(0, y-1)
+    def rand_coordinates(self):
+        rand_row=random.randint(0, self.col-1)
+        rand_col=random.randint(0, self.row-1)
         lst=[rand_row, rand_col]
         return lst
 
@@ -85,9 +84,9 @@ class Game(ABC):
     def start_game(self):
         pass
     
-    @abstractmethod
-    def first_move(self):
-        pass
+    #@abstractmethod
+    #def first_move(self):
+    #    pass
 
     @abstractmethod
     def play_game(self):
@@ -107,35 +106,82 @@ class Battleship(Game):
         coord=next(mylist)
         return coord
 
-    def next_move(self):
-        pass
+    def hunt_for_ship(self, col, row):
+        self.board.show_board()
+        last_hit = []
+        last_hit.append([col, row])
+        for el in last_hit: 
+            for method in range(0,4):
+                print("Lista trafionych współrzędnych" + str(last_hit))
+                lst_of_methods=[self.south_move(el[0], el[1]), self.east_move(el[0], el[1]), self.north_move(el[0], el[1]), self.west_move(el[0], el[1])]
+            
+                x=int(lst_of_methods[method][0])
+                y=int(lst_of_methods[method][1])
 
-    def hunt_for_ship(self):
-        pass
+                if self.board.is_empty(x,y)==False:
+                    print("unavailable move")    
+                    continue
+                elif self.board.is_empty(x,y):
+                    print("Kolejne proponowane współrzędne: " + str(x) + "," + str(y))
+                    z=input("Podaj stan współrzędnych, jak poprzednio - trafiony, nietrafiony, zatopiony: ")
+                    
+                    if z=="nietrafiony":
+                        self.board.change_to_miss(x,y)
+                        self.board.show_board()
+                        continue
+                    if z=="zatopiony":
+                        last_hit.append([x,y])
+                        for el in last_hit:
+                            self.board.change_to_sunken(el[0],el[1])
+                        self.board.show_board()
+                        return False
+                    if z=="trafiony":
+                        self.board.change_to_hit(x,y)
+                        print(self.board)
+                        self.board.show_board()
+                        last_hit.append([x,y])
+
+    def south_move(self, x,y):
+        lst=[x+1,y]
+        return lst
+
+    def east_move(self, x,y):
+        lst=[x,y+1]
+        return lst
+
+    def north_move(self, x,y):
+        lst=[x-1,y]
+        return lst
+
+    def west_move(self, x,y):
+        lst=[x,y-1]
+        return lst
 
     def play_game(self):
         game_on=True
         while game_on:
             self.start_game()
-            for el in range(self.size_of_board+1):
+            print("Proponowane współrzędne do sprawdzenia na tablicy przeciwnika: " + str(self.first_moves_when_not_hunting()))
+            coordinates=iter([x for x in self.first_moves])
+            coord=next(coordinates)
+            for _ in range(self.board.size_of_board+1):
                 if self.board.is_empty(coord[0], coord[1]):
                     c=input("Wpisz trafiony, nietrafiony lub zatopiony: ")
                     if c=="trafiony":
-                        self.board.change_to_trafiony(coord[0], coord[1])
-                        #ship=Ship(coord[0],coord[1],"unfully", self.board, 3)
-                        self.hunt_for_ship()
+                        self.board.change_to_hit(coord[0], coord[1])
+                        self.hunt_for_ship(coord[0], coord[1])
                     elif c=="nietrafiony":
                         self.board.change_to_miss(coord[0], coord[1])
                         self.board.show_board()
-                        coord=self.first_moves_when_not_hunting()
+                        coord=next(coordinates)
                         print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))  
                     elif c=="zatopiony":
                         self.board.change_to_sunken(coord[0], coord[1])
                         self.board.show_board()
-                        coord=self.first_moves_when_not_hunting()
+                        coord=next(coordinates)
                         print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))
                 else:
-                    coord=self.first_moves_when_not_hunting()
+                    coord=next(coordinates)
                     print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))
 
 
@@ -143,8 +189,10 @@ def main():
     col = int(input("Podaj długość tablicy: "))
     row = int(input("Podaj szerokość tablicy: "))
     shipboard = ShipBoard(col, row)
+    print(shipboard.rand_coord) #  int not subcriptable
     print(shipboard.show_board())
     game = Battleship(shipboard)
+    game.play_game()
     
 
 if __name__ == '__main__':
