@@ -3,7 +3,7 @@
 
 ## General info
 
-The algorithm which aim is to sink all ships of other players.
+The algorithm which aim is to sink all ships of other player.
 
 ## Prerequisites
 
