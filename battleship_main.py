@@ -30,10 +30,18 @@ class ShipBoard(Board):
 
     def is_empty(self, x, y):
         try:
-            self.board[x][y]=="e"
-            return True
+            if self.board[x][y]=="X" or self.board[x][y]==" " or self.board[x][y]=="?":
+                return False
         except IndexError:
             return False
+        else:
+            return True
+
+    def is_allowed(self, x,y):
+        if self.board[x][y]=="X" or self.board[x][y]==" " or self.board[x][y]=="?":
+            return False
+        else:
+            return True
 
     def change_to_miss(self, row, col):
         self.board[row][col]=" "
@@ -121,7 +129,7 @@ class Battleship(Game):
                 if self.board.is_empty(x,y)==False:
                     print("unavailable move")    
                     continue
-                elif self.board.is_empty(x,y):
+                if self.board.is_empty(x,y):
                     print("Kolejne proponowane współrzędne (wiersz 0-9, kolumna 0-9): " + str(x) + "," + str(y))
                     z=input("Podaj stan współrzędnych, jak poprzednio - trafiony, nietrafiony, zatopiony: ")
                     
