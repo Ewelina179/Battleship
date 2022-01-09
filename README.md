@@ -15,5 +15,5 @@ python battleship_main.py
 
 ## Technologies
 
-Python, Pytest
+Python
 
