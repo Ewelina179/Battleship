@@ -13,7 +13,7 @@ git clone
 
 python battleship_main.py
 
-## Technologies
+## Technology stack
 
 Python
 
