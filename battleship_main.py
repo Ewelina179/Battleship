@@ -90,10 +90,6 @@ class Game(ABC):
     @abstractmethod
     def start_game(self):
         pass
-    
-    #@abstractmethod
-    #def first_move(self):
-    #    pass
 
     @abstractmethod
     def play_game(self):
@@ -107,7 +103,7 @@ class Battleship(Game):
         self.rand_coord = board.rand_coordinates()
 
     def start_game(self):
-        print("Proponowane współrzędne do sprawdzenia na tablicy przeciwnika (wiersz 0-9, kolumna 0-9): " + str(self.first_moves_when_not_hunting()))
+        print("Suggested coordinates to be checked on the opponent's board (row 0-9, column 0-9): " + str(self.first_moves_when_not_hunting()))
 
     def first_moves_when_not_hunting(self):
         mylist=iter(self.first_moves)
@@ -120,30 +116,30 @@ class Battleship(Game):
         last_hit.append([col, row])
         for el in last_hit: 
             for method in range(0,4):
-                print("Lista trafionych współrzędnych" + str(last_hit))
+                print("List of hit coordinates" + str(last_hit))
                 lst_of_methods=[self.south_move(el[0], el[1]), self.east_move(el[0], el[1]), self.north_move(el[0], el[1]), self.west_move(el[0], el[1])]
             
                 x=int(lst_of_methods[method][0])
                 y=int(lst_of_methods[method][1])
 
                 if self.board.is_empty(x,y)==False:
-                    print("unavailable move")    
+                    print("Unavailable move")    
                     continue
                 if self.board.is_empty(x,y):
-                    print("Kolejne proponowane współrzędne (wiersz 0-9, kolumna 0-9): " + str(x) + "," + str(y))
-                    z=input("Podaj stan współrzędnych, jak poprzednio - trafiony, nietrafiony, zatopiony: ")
+                    print("Another proposed coordinates (row 0-9, column 0-9): " + str(x) + "," + str(y))
+                    z=input("Enter the state of the coordinates as before - hit, missed, sunk: ")
                     
-                    if z=="nietrafiony":
+                    if z=="missed":
                         self.board.change_to_miss(x,y)
                         self.board.show_board()
                         continue
-                    if z=="zatopiony":
+                    if z=="sunk":
                         last_hit.append([x,y])
                         for el in last_hit:
                             self.board.change_to_sunken(el[0],el[1])
                         self.board.show_board()
                         return False
-                    if z=="trafiony":
+                    if z=="hit":
                         self.board.change_to_hit(x,y)
                         print(self.board)
                         self.board.show_board()
@@ -169,33 +165,33 @@ class Battleship(Game):
         game_on=True
         while game_on:
             self.start_game()
-            print("Proponowane współrzędne do sprawdzenia na tablicy przeciwnika (wiersz 0-9, kolumna 0-9): " + str(self.first_moves_when_not_hunting()))
+            print("Suggested coordinates to be checked on the opponent's board (row 0-9, column 0-9): " + str(self.first_moves_when_not_hunting()))
             coordinates=iter([x for x in self.first_moves])
             print(self.first_moves)
             coord=next(coordinates, self.board.rand_coordinates())
             for _ in range(self.board.size_of_board+1):
                 if self.board.is_empty(coord[0], coord[1]):
-                    c=input("Wpisz trafiony, nietrafiony lub zatopiony: ")
-                    if c=="trafiony":
+                    c=input("Enter the state of the coordinates as before - hit, missed, sunk: ")
+                    if c=="hit":
                         self.board.change_to_hit(coord[0], coord[1])
                         self.hunt_for_ship(coord[0], coord[1])
-                    elif c=="nietrafiony":
+                    elif c=="missed":
                         self.board.change_to_miss(coord[0], coord[1])
                         self.board.show_board()
                         coord=next(coordinates, self.board.rand_coordinates())
-                        print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))  
-                    elif c=="zatopiony":
+                        print("Another proposed coordinates (row 0-9, column 0-9): " + str(coord))  
+                    elif c=="hit":
                         self.board.change_to_sunken(coord[0], coord[1])
                         self.board.show_board()
                         coord=next(coordinates, self.board.rand_coordinates())
-                        print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))
+                        print("Another proposed coordinates (row 0-9, column 0-9): " + str(coord))
                 else:
                     coord=next(coordinates, self.board.rand_coordinates())
-                    print("Kolejne proponowane współrzędne do sprawdzenia:" + str(coord))
+                    print("Another proposed coordinates (row 0-9, column 0-9): " + str(coord))
 
 
 def main():
-    col = int(input("Podaj długość boku tablicy: "))
+    col = int(input("Enter the length of the side of the board: "))
     shipboard = ShipBoard(col)
     game = Battleship(shipboard)
     game.play_game()
